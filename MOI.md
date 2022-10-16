@@ -6,7 +6,7 @@ Collection of manuscripts for Tri-CePPI model.
 ## ID Models/Software
 
 
-###[Shchur _et al._ 2022/VGsim](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1010409)
+### [Shchur _et al._ 2022/VGsim](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1010409)
 **_TA_**:  Fast/efficient, somewhat flexible, compartment based simulation software: accounts for host population structure, pathogen evolution, host immunity, contact matrices.
 
 ##### Model Framework      
@@ -26,7 +26,7 @@ Collection of manuscripts for Tri-CePPI model.
    
 
 
-###[Moshiri _et al._ 2018/FAVITES](https://academic.oup.com/bioinformatics/article/35/11/1852/5161084?login=false)
+### [Moshiri _et al._ 2018/FAVITES](https://academic.oup.com/bioinformatics/article/35/11/1852/5161084?login=false)
 **_TA_**: Simulates the full end-to-end epidemic dataset (social contact network, transmission history, incomplete sampling, viral phylogeny, error-free sequences and real-world sequencing imperfections) - via a generative model = computationally expensive.     
 
 - _NB_ his dissertation on FAVITES has additional [details](https://escholarship.org/uc/item/62s7q92d)
@@ -58,14 +58,14 @@ Collection of manuscripts for Tri-CePPI model.
 
 
 
-###[Lequime _et al._ 2020/nosoi](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13422)
+### [Lequime _et al._ 2020/nosoi](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13422)
 **_TA_**:  
 
 ##### Model Framework     
 ##### Coding Decisions  
 	
 
-###[Verity Unpublished/SIMPLEGEN](https://github.com/mrc-ide/SIMPLEGEN)
+### [Verity Unpublished/SIMPLEGEN](https://github.com/mrc-ide/SIMPLEGEN)
 **_TA_**:  
 
 ##### Model Framework     
@@ -75,10 +75,10 @@ Collection of manuscripts for Tri-CePPI model.
 
 ## ID Dynamic Modeling
 
-###[Blenkinsop _et al._ 2022](https://elifesciences.org/articles/76487)
+### [Blenkinsop _et al._ 2022](https://elifesciences.org/articles/76487)
 TA: Clinical data of HIV VL and Tcell infxns to resolve the branch length/ancestral depth in the Coal Tree
 
-###[Brockmann & Helbing 2013](https://www.science.org/doi/10.1126/science.1245200)
+### [Brockmann & Helbing 2013](https://www.science.org/doi/10.1126/science.1245200)
 
 **_TA_**: Canonical flu spread via airlines/networks manuscript
 
