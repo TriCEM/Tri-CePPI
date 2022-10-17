@@ -13,6 +13,7 @@ Collection of manuscripts for Tri-CePPI model.
 - Runs forward sims through a Gillespie-style algorithm in a SIS Compartment model framework (can vary S and I compartments to model waning immunity, vaccination, etc.).    
 - code base is C++ w/ Python interface/wrapper
 
+<<<<<<< Updated upstream
 ##### Coding Decisions
 - Allows for host population (contact) structure.    
 - Adaptive molecular evolution but only positive fitness effects.    
@@ -83,6 +84,27 @@ TA: Clinical data of HIV VL and Tcell infxns to resolve the branch length/ancest
 **_TA_**: Canonical flu spread via airlines/networks manuscript
 
 
+=======
+#####[Shchur _et al._ 2022/VGsim](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1010409)
+TA: Framework model      
+	- Runs forward sims through a Gillespie-style algorithm/Compartment Based Framework.    
+	- Allows for host population (contact) structure.    
+	- Adaptive molecular evolution but only positive fitness effects.    
+	- Written in C++ but has Python interface
+
+#####[Moshiri _et al._ 2018/FAVITES](https://academic.oup.com/bioinformatics/article/35/11/1852/5161084?login=false)
+TA: Framework model      
+	- Pays particular attention to contact network.   
+	- “One key distinction is that FAVITES simulates the full end-to-end epidemic dataset (social contact network, transmission history, incomplete sampling, viral phylogeny, error-free sequences and real-world sequencing imperfections), whereas each existing tool simulates only a subset of these steps".    
+	-  Written in Python with API for different modules.   
+	-  Seems to be actively maintained    
+**TA2**:  
+	-  Notes the importance of epistasis for viral evolution/dynamics?  
+
+#####[Blenkinsop _et al._ 2022](https://elifesciences.org/articles/76487)
+TA: Clinical data of HIV VL and Tcell infxns to resolve the branch length/ancestral depth in the Coal Tree
+
+>>>>>>> Stashed changes
 ## Genomics
 
 ## Epidemiology
