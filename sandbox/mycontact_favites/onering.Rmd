@@ -1,0 +1,119 @@
+---
+title: "Sanbox: Explore FAVITES and custom contact matrix"
+author: "Nicholas F. Brazeau"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    highlight: textmate
+    theme: lumen
+    toc: yes
+    toc_float: yes
+    toc_depth: 3
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F, eval = T, results = 'hide',
+                      fig.align = 'center', fig.width = 6, fig.height = 6)
+knitr::opts_knit$set(root.dir = here::here(""))
+
+```
+
+```{r}
+library(tidyverse)
+library(remotes)
+remotes::install_github("nickbrazeau/goodegg"); library(goodegg)
+library(ape)
+library(vcfR)
+```
+# Introduction/Purpose
+1. Simulate a dataset that has individuals with differing contact patterns
+2. Use a prediction approach to determine their "effective distance" 
+- _i.e._ parameterize the distance matrix, undirected currently? 
+3. Plug into `FAVITES` and run
+4. **Q**: Can we recapture dyanmics of relationships in the genetic sequences 
+
+
+
+# Simulate Relationships
+Very simple framework: population of $N$ individuals that are a part of discrete demes, $K$ (e.g. spatial distance is discretized). There are $n_k$ individuals in each deme, such that $\sum_{k=1}^K n_k = N$. Individuals within a deme can be indexed with $j$, and each individual, $i_{j,k}$ has some predictor value that determines their frequency of contact that we will define as "magnetism", $p$. Assume that $p$ follows a standard normal with negative values indicating repulsion (more isolation) and positive values indicating attractiveness (more sociality). Will assume Malecot's classic isolation by distance assumption and that "relatedness" (here contact) follows and exponential pattern. 
+Demes are put into space on a square lattice model, where coordinates are randomly selected
+coords pre specified 
+
+
+```{r}
+#' @title Effective Distance Matrix Generator
+#' @param k integer; number of demes to be considered
+#' @param n integer vector; vector of length k with integer elements specifying 
+#' number of individuals per deme
+#' @param normmean numeric; mean for the normal dist; default standard normal 
+#' @param normsd numeric; sd for the normal dist; default standard normal  
+#' @param latdim integer; a value for the square lattice matrix for spatial 
+#' coordinates to be randomly drawn from (mxm). Either it or coords must be specified 
+#' @param coords matrix; x, y coordinates to be considered for each deme (assume) in same order as deme assignments
+make_dist_mat <- function(k, n, normmean = 0, normsd = 1, latdim = NULL, coords = NULL) {
+  #......................
+  # assertions
+  #......................
+  goodegg:::assert_int(k)
+  goodegg:::assert_vector_int(n)
+  goodegg:::assert_numeric(stdnmean)
+  goodegg:::assert_numeric(stnsd)
+  if(!is.null(latdim)) {
+    goodegg:::assert_int(latdim)
+    # not assertion but to not waste if loop
+    coords <- round(seq(1, latdim*latdim, by = latdim))
+    coords <- expand.grid(coords, coords)
+    coords <- coords[sample(1:nrow(coords), size = k), ]
+  } else if (!is.null(coords)) {
+    goodegg:::assert_ncol(coords, 2)
+    goodegg:::assert_matrix_numeric(coords)
+  } else {
+    stop("Must specify either coords or latdim")
+  }
+  
+  #......................
+  # calculate euclidean distance
+  #......................
+  distmat <- matrix(NA, k, k)
+  diag(distmat) <- 0
+  # get upper triangle (for loops are slower in R but for readability)
+  ij <- t(combn(k,2))
+  for(l in 1:nrow(ij)) {
+    # get r index, remember r counts by rows first then columns
+    e <- sum(ij[l,1] + (ij[l,2]-1)*k)
+    distmat[e] <- dist(rbind(coords[ij[l,1], ], coords[ij[l,2], ]), 
+                       method = "euclidean")
+  }
+  # euclidean distances are symmetric
+  distmat[lower.tri(distmat)] <- t(distmat)[lower.tri(distmat)]
+  
+  #......................
+  # draw sim/sample population
+  #......................
+  smpl <- tibble::tibble(id = 1:sum(n)) %>% 
+    dplyr::mutate(
+      deme = rep(1:k, n),
+      magn = rnorm(sum(n), mean = normmean, sd = normsd)
+    )
+  
+  
+  
+}
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
