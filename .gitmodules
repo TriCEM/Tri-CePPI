@@ -1,3 +1,6 @@
 [submodule "sandbox/FAVITES"]
 	path = sandbox/FAVITES
 	url = https://github.com/niemasd/FAVITES.git
+[submodule "sandbox/mycontact_favites/engine/FAVITES"]
+	path = sandbox/mycontact_favites/engine/FAVITES
+	url = https://github.com/niemasd/FAVITES.git
