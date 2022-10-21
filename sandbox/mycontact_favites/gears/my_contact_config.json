@@ -1,15 +1,15 @@
 {
     "ContactNetwork":                "NetworkX",
     "ContactNetworkGenerator":       "File",
-    "contact_network_file":          "example_contact_network.txt",
+    "contact_network_file":          "gears/play_contact_network.tab.txt",
 
     "num_cn_nodes":                  10,
 
     "Driver":                        "Default",
-    "out_dir":                       "mycontact_out_ret",
+    "out_dir":                       "results/mycontact_out_ret",
 
     "EndCriteria":                   "Transmissions",
-    "end_transmissions":             5,
+    "end_transmissions":             500,
 
     "Logging":                       "STDOUT",
 

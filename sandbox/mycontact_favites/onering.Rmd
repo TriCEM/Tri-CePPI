@@ -24,8 +24,13 @@ knitr::opts_knit$set(root.dir = here::here(""))
 library(tidyverse)
 library(remotes)
 remotes::install_github("nickbrazeau/goodegg"); library(goodegg)
+remotes::install_github("CenterForAssessment/randomNames"); library(randomNames)
+library(tidygraph)
+library(ggraph)
+library(cowplot)
 library(ape)
-library(vcfR)
+library(treeio)
+library(ggtree)
 ```
 # Introduction/Purpose
 1. Simulate a dataset that has individuals with differing contact patterns
@@ -37,29 +42,36 @@ library(vcfR)
 
 
 # Simulate Relationships
-Very simple framework: population of $N$ individuals that are a part of discrete demes, $K$ (e.g. spatial distance is discretized). There are $n_k$ individuals in each deme, such that $\sum_{k=1}^K n_k = N$. Individuals within a deme can be indexed with $j$, and each individual, $i_{j,k}$ has some predictor value that determines their frequency of contact that we will define as "magnetism", $p$. Assume that $p$ follows a standard normal with negative values indicating repulsion (more isolation) and positive values indicating attractiveness (more sociality). Will assume Malecot's classic isolation by distance assumption and that "relatedness" (here contact) follows and exponential pattern. 
-Demes are put into space on a square lattice model, where coordinates are randomly selected
-coords pre specified 
+Very simple framework: population of $N$ individuals that are a part of discrete demes, $K$ (e.g. spatial distance is discretized). There are $n_k$ individuals in each deme, such that $\sum_{k=1}^K n_k = N$. Individuals within a deme can be indexed with $j$, and each individual, $i_{j,k}$ has some predictor value that determines their frequency of contact that we will define as "magnetism", $p$. 
+
+
+Assume that $p$ follows a beta distribution with higher values indicating more isolation and lower values indicating more sociality (_i.e._ this is an "amplifier" of distance... or more appropriately one is the loneliest number). Will assume Malecot's classic isolation by distance assumption and that "relatedness" (here contact) follows and exponential pattern.   
+Demes are put into space on a square lattice model, where coordinates are inputted or predetermined, with euclidean distance dictating "distance" between them.
+Then calculate an effective distance probability matrix and draw contacts from matrix to input into `FAVITES` (see notes for qualification of this). 
 
 
 ```{r}
-#' @title Effective Distance Matrix Generator
+#' @title Contact Probability Matrix Generator
 #' @param k integer; number of demes to be considered
 #' @param n integer vector; vector of length k with integer elements specifying 
 #' number of individuals per deme
-#' @param normmean numeric; mean for the normal dist; default standard normal 
-#' @param normsd numeric; sd for the normal dist; default standard normal  
+#' @param rbshape1 numeric; shape1 for the beta distribution to parameterize magnetism
+#' @param rbshape2 numeric; shape2 for the beta distribution to parameterize magnetism
 #' @param latdim integer; a value for the square lattice matrix for spatial 
 #' coordinates to be randomly drawn from (mxm). Either it or coords must be specified 
 #' @param coords matrix; x, y coordinates to be considered for each deme (assume) in same order as deme assignments
-make_dist_mat <- function(k, n, normmean = 0, normsd = 1, latdim = NULL, coords = NULL) {
+#' @details Magnetism beta distribution default is to have extreme tails -- some individuals are frequent isolaters vs frequent contactors. NB, parameterized that values closer to 1 are more isolator 
+#' @details Remember, dealing with euclidean distance without standardization, so larger distances between nodes/demes will result in low contacts 
+make_prob_contact_mat <- function(k, n, 
+                                  rbshape1 = 0.5, rbshape2 = 0.5, 
+                                  latdim = NULL, coords = NULL) {
   #......................
   # assertions
   #......................
   goodegg:::assert_int(k)
   goodegg:::assert_vector_int(n)
-  goodegg:::assert_numeric(stdnmean)
-  goodegg:::assert_numeric(stnsd)
+  goodegg:::assert_numeric(rbshape1)
+  goodegg:::assert_numeric(rbshape2)
   if(!is.null(latdim)) {
     goodegg:::assert_int(latdim)
     # not assertion but to not waste if loop
@@ -73,11 +85,14 @@ make_dist_mat <- function(k, n, normmean = 0, normsd = 1, latdim = NULL, coords 
     stop("Must specify either coords or latdim")
   }
   
+  # calculate once
+  N <- sum(n)
+  
   #......................
   # calculate euclidean distance
   #......................
   distmat <- matrix(NA, k, k)
-  diag(distmat) <- 0
+  diag(distmat) <- 1 # although distance is truly 0 w/in a deme, make 1 for identity of magnetism
   # get upper triangle (for loops are slower in R but for readability)
   ij <- t(combn(k,2))
   for(l in 1:nrow(ij)) {
@@ -92,24 +107,192 @@ make_dist_mat <- function(k, n, normmean = 0, normsd = 1, latdim = NULL, coords 
   #......................
   # draw sim/sample population
   #......................
-  smpl <- tibble::tibble(id = 1:sum(n)) %>% 
+  indp <- tibble::tibble(id = 1:N) %>% 
     dplyr::mutate(
       deme = rep(1:k, n),
-      magn = rnorm(sum(n), mean = normmean, sd = normsd)
+      magn = rbeta(n = N, shape1 = rbshape1, shape2 = rbshape2)
     )
   
+  #......................
+  # ind contact
+  #......................
+  indmat <- matrix(NA, N, N)
+  diag(indmat) <- 0 # assuming no one can truly have no contacts
+  # loop through to fill in contact matrix (for loops are slower in R but for readability)
+  ij <- t(combn(N,2))
+  for(l in 1:nrow(ij)) {
+    # get r index, remember r counts by rows first then columns
+    e <- sum(ij[l,1] + (ij[l,2]-1)*N)
+    # get params and dist
+    m1 <- indp$magn[ij[l,1]]
+    m2 <- indp$magn[ij[l,2]]
+    d12 <- distmat[indp$deme[ij[l,1]], indp$deme[ij[l,2]]]
+    indmat[e] <- exp(-( (m1+m2)*d12 ))
+  }
   
-  
+  # standardize contact into a probability matrix 
+  indmat[lower.tri(indmat)] <- t(indmat)[lower.tri(indmat)]
+  return(indmat/rowSums(indmat))
 }
+
+
+#' @title Draw Contacts
+#' @param cpm dataframe; contact prob matrix
+#' @param iters interger; number of contacts to be generated 
+#' @details assume a single seed of infection  
+draw_contacts <- function(cpm, iters) {
+  goodegg:::assert_matrix_numeric(cpm)
+  goodegg:::assert_square_matrix(cpm)
+  goodegg:::assert_single_int(iters)
+  # storage
+  contact_mat <- matrix(NA, nrow = iters, ncol = 2)
+  #......................
+  # draw contacts 
+  #   cpm matrix is to->from setup 
+  #......................
+  infseed <- sample(nrow(cpm), size = 1)
+  for (i in 1:iters) {
+    # prop
+    newcontact <- sample(1:ncol(cpm), size = 1, prob = cpm[infseed, ] )
+    # update 
+    contact_mat[i,] <- c(infseed, newcontact)
+    infseed <- newcontact
+  }
+  
+  # out
+  colnames(contact_mat) <- c("id1", "id2")
+  return(tibble::as_tibble(contact_mat))
+}
+
+
+#' @title Liftover to FAVITES format
+#' @param outpath charpath; writing out to your local drive
+#' @details adding random names purely for human readability later, is
+#' an unneccessary intermed step
+
+liftover_conmat2favites <- function(realized_contmat, outpath){
+  rnnames <- randomNames::randomNames(n = length(unique(unlist(realized_contmat))),
+                                      which.names = "first",
+                                      sample.with.replacement = F)
+  nodeval <- unique(unlist(realized_contmat))
+  realized_contmat <- apply(realized_contmat, 2, as.character)
+  for (i in 1:length(rnnames)) {
+    realized_contmat[realized_contmat == nodeval[i]] <- rnnames[i]
+  }
+  
+  # assert some class 
+  #TODO 
+  nodes <- sort(unique(as.vector(realized_contmat)))
+  p1 <- data.frame(c1 = "NODE", c2 = nodes, c3 = ".", c4 = NA, c5 = NA)
+  p2 <- data.frame(c1 = "EDGE", c2 = realized_contmat[,1], c3 = realized_contmat[,2],
+                   c4 = ".", c5 = "u")
+  # write out
+  readr::write_tsv(x = rbind(p1,p2),
+                   na = "",
+                   col_names = F,
+                   file = outpath)
+  # return key for downstream 
+  out <- tibble::tibble(node = 1:length(rnnames), names = rnnames)
+  return(out)
+}
+
 
 
 ```
 
 
+## Run Functions
+```{r}
+contact_probmat <- make_prob_contact_mat(k = 5, n = rep(3,5),
+                                     rbshape1 = 0.5, rbshape2 = 0.5,
+                                     latdim = 5)
+
+realized_contacts <- draw_contacts(cpm = contact_probmat, iters = 500) 
+key <- liftover_conmat2favites(realized_contmat = realized_contacts,
+                        outpath = "gears/play_contact_network.tab.txt")
+```
+
+## Run `FAVITES`
+```{bash, engine.opts='-l', eval=T}
+python3 engine/FAVITES/run_favites_docker.py --config gears/my_contact_config.json
+sleep 5
+```
+
+## Viz Results
+```{r}
+#............................................................
+# network
+#...........................................................
+# dictionary
+dc1 <- key %>% 
+  dplyr::rename(id1 = node) %>% 
+  dplyr::mutate(id1 = as.character(id1))
+dc2 <- key %>% 
+  dplyr::rename(id2 = node) %>% 
+  dplyr::mutate(id2 = as.character(id2))
+
+# get edges in tidy format
+adj_mat <- realized_contacts %>% 
+  dplyr::mutate(uconnect = purrr::map2_chr(id1, id2,
+                                           function(x,y){paste(sort(c(x,y)), collapse = "|")})) %>% 
+  dplyr::group_by(uconnect) %>% 
+  dplyr::summarise(
+    conn_cnt = dplyr::n()
+  ) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::mutate(id1 = stringr::str_split_fixed(uconnect, "\\|", n=2)[,1],
+                id2 = stringr::str_split_fixed(uconnect, "\\|", n=2)[,2]) %>% 
+  dplyr::left_join(., dc1, by = "id1") %>% 
+  dplyr::left_join(., dc2, by = "id2") %>% 
+  dplyr::select(c("names.x", "names.y", "conn_cnt"))
+
+# plot adjmatrix
+
+p1 <- adj_mat %>% 
+  tidygraph::as_tbl_graph(., directed = F) %>% 
+  tidygraph::activate(., "nodes") %>%
+  dplyr::mutate(community = as.factor(tidygraph::group_louvain(weights = conn_cnt))) %>%
+  tidygraph::activate("edges") %>%
+  ggraph::ggraph(layout = 'kk') +
+  ggraph::geom_edge_link(aes(color = conn_cnt), width = 1) +
+  ggraph::scale_edge_color_gradientn("Connections \n Count", colors = viridisLite::viridis(n = 15)) +
+  ggraph::geom_node_point(aes(color = community), size = 3) +
+  scale_color_brewer("Community", palette = "Set1") +
+  geom_node_text(aes(label = name), repel = TRUE, size = 3)+
+  ggraph::theme_graph() +
+  theme(legend.position = "left") +
+  guides(color = guide_legend(nrow = 2, byrow = TRUE))
 
 
+#............................................................
+# tree
+#...........................................................
+retseq <- ape::read.FASTA("results/mycontact_out_ret/error_free_files/sequence_data.fasta.gz")
+names(retseq) <- stringr::str_extract(names(retseq), "\\|(.*?)\\|")
+names(retseq) <- gsub(pattern = "\\|", replacement = "", x = names(retseq))
+
+# going to assume a very simple model of evolution (and not test any)
+Ndist <- ape::dist.dna(x = retseq, model = "N")
+myTree <- nj(as.matrix(Ndist))
+
+p2 <- ggtree(myTree, branch.length="none",  layout="circular") +
+  geom_tiplab(size=3, color="#000000") +
+  theme_tree()
+```
+```{r}
+cowplot::plot_grid(p1,p2, nrow = 2, align = "h")
+```
 
 
+## Thoughts/Issues
+
+- I've assumed this exponential decay of "contact". Even if we use fancy ML to
+predict "magnetism", we sitll will have to parameterize that covariate. Would
+need a full predictive matrix from the ML folks. Right now I have standardized 
+the row probabilities to make a technically correct probability distribution for
+each individual...but this is not in the spirit of $\beta$ in the WAIFW 
+- Have assumed that there is no perfect isolation (_i.e._ no prob of contact)
+- Have assumed undirected/symmetric contact probs (can't relax?)
 
 
 
