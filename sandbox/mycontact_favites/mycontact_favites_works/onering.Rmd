@@ -1,5 +1,5 @@
 ---
-title: "Sanbox: Explore FAVITES and custom contact matrix"
+title: "Sandbox: Explore FAVITES and custom contact matrix (V1)"
 author: "Nicholas F. Brazeau"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
@@ -35,17 +35,16 @@ library(ggtree)
 # Introduction/Purpose
 1. Simulate a dataset that has individuals with differing contact patterns
 2. Use a prediction approach to determine their "effective distance" 
-- _i.e._ parameterize the distance matrix, undirected currently? 
 3. Plug into `FAVITES` and run
-4. **Q**: Can we recapture dyanmics of relationships in the genetic sequences 
+4. **Q**: Can we recapture dynamics of relationship contact in transmission tree, or more simply: **_does the model work as expected_**. 
 
 
 
 # Simulate Relationships
-Very simple framework: population of $N$ individuals that are a part of discrete demes, $K$ (e.g. spatial distance is discretized). There are $n_k$ individuals in each deme, such that $\sum_{k=1}^K n_k = N$. Individuals within a deme can be indexed with $j$, and each individual, $i_{j,k}$ has some predictor value that determines their frequency of contact that we will define as "magnetism", $p$. 
+Very simple framework: population of $N$ individuals that are a part of discrete demes, $K$ (e.g. spatial distance is discretized). There are $n_k$ individuals in each deme, such that $\sum_{k=1}^K n_k = N$. Individuals within a deme can be indexed with $j$, and each individual, $i_{j,k}$ has some predictor value that determines their frequency of contact that we will define as "isolatism", $p$. 
 
 
-Assume that $p$ follows a beta distribution with higher values indicating more isolation and lower values indicating more sociality (_i.e._ this is an "amplifier" of distance... or more appropriately one is the loneliest number). Will assume Malecot's classic isolation by distance assumption and that "relatedness" (here contact) follows and exponential pattern.   
+Assume that $p$ follows a beta distribution with higher values indicating more isolation and lower values indicating more sociality (_i.e._ this is an "amplifier" of distance, parameterized as $Beta(0.5,0.5)$ for differing social patterns.. Will assume Malecot's classic isolation by distance assumption and that "relatedness" (here contact) follows and exponential pattern.   
 Demes are put into space on a square lattice model, where coordinates are inputted or predetermined, with euclidean distance dictating "distance" between them.
 Then calculate an effective distance probability matrix and draw contacts from matrix to input into `FAVITES` (see notes for qualification of this). 
 
@@ -192,7 +191,7 @@ liftover_conmat2favites <- function(realized_contmat, outpath){
                    col_names = F,
                    file = outpath)
   # return key for downstream 
-  out <- tibble::tibble(node = 1:length(rnnames), names = rnnames)
+  out <- tibble::tibble(node = nodeval, names = rnnames)
   return(out)
 }
 
@@ -204,24 +203,25 @@ liftover_conmat2favites <- function(realized_contmat, outpath){
 ## Run Functions
 ```{r}
 contact_probmat <- make_prob_contact_mat(k = 5, n = rep(3,5),
-                                     rbshape1 = 0.5, rbshape2 = 0.5,
-                                     latdim = 5)
+                                         rbshape1 = 0.5, rbshape2 = 0.5,
+                                         latdim = 5)
 
 realized_contacts <- draw_contacts(cpm = contact_probmat, iters = 500) 
 key <- liftover_conmat2favites(realized_contmat = realized_contacts,
-                        outpath = "gears/play_contact_network.tab.txt")
+                               outpath = "gears/play_contact_network.tab.txt")
 ```
 
 ## Run `FAVITES`
 ```{bash, engine.opts='-l', eval=T}
 python3 engine/FAVITES/run_favites_docker.py --config gears/my_contact_config.json
-sleep 5
 ```
 
 ## Viz Results
+
+
 ```{r}
 #............................................................
-# network
+# contact network
 #...........................................................
 # dictionary
 dc1 <- key %>% 
@@ -265,19 +265,146 @@ p1 <- adj_mat %>%
 
 
 #............................................................
-# tree
+# transmission tree
 #...........................................................
-retseq <- ape::read.FASTA("results/mycontact_out_ret/error_free_files/sequence_data.fasta.gz")
-names(retseq) <- stringr::str_extract(names(retseq), "\\|(.*?)\\|")
-names(retseq) <- gsub(pattern = "\\|", replacement = "", x = names(retseq))
+time_tree <- readr::read_tsv("results/mycontact_out_ret/error_free_files/transmission_network.txt.gz", col_names = F) %>% 
+  magrittr::set_colnames(c("parent", "child", "tte")) 
 
-# going to assume a very simple model of evolution (and not test any)
-Ndist <- ape::dist.dna(x = retseq, model = "N")
-myTree <- nj(as.matrix(Ndist))
 
-p2 <- ggtree(myTree, branch.length="none",  layout="circular") +
-  geom_tiplab(size=3, color="#000000") +
-  theme_tree()
+#......................
+# work for plotting
+#......................
+plot_yvals_by_membership_chains <- function(transtree) {
+  #......................
+  # find membership
+  #......................
+  membership <- transtree %>% 
+    dplyr::mutate(membership = NA)
+  
+  # find seeds
+  seed <- time_tree %>% 
+    dplyr::filter(tte == 0) %>% 
+    dplyr::pull("child")
+  for(i in 1:length(seed)) {
+    # init per seed
+    infectious <- TRUE
+    infected <- seed[i]
+    membership$membership[transtree$child == seed[i]] <- i
+    while(infectious) {
+      # secondary infxns
+      membership$membership[transtree$parent %in% infected] <- i
+      # update
+      infected <- transtree$child[which(transtree$parent %in% infected)]
+      infectious <- any(transtree$parent %in% infected)
+    }
+  }
+  
+  #......................
+  # find infection chains 
+  # get appropriate spread out y values 
+  #......................
+  membership <- membership %>% 
+    dplyr::mutate(ystart = NA,
+                  yend = NA)
+  # split 
+  membershiplist <- split(membership, membership$membership)
+  
+  # function for getting y chains spread out 
+  get_y_chains <- function(membershipdf){
+    # find seeds
+    infected <- seed <- membershipdf %>% 
+      dplyr::filter(tte == 0) %>% 
+      dplyr::pull("child")
+    # seed starts at 0
+    membershipdf <- membershipdf %>% 
+      dplyr::mutate(ystart = ifelse(tte == 0, 0, ystart),
+                    yend = ifelse(tte == 0, 0, yend))
+    # gears
+    tt <- 0
+    iter <- 1
+    while(max(membershipdf$tte) > tt) {
+      for (i in 1:length(infected)) {
+        membershipdf$ystart[membershipdf$parent == infected[i]] <- membershipdf$yend[membershipdf$child == infected[i]]
+        # y end to spread out 
+        yends <- sum(membershipdf$parent == infected[i])
+        if(yends > 1) {
+          yends <- unique(c(1:floor(yends/2), 1:ceiling(yends/2)*-1+1))
+        } else {
+          yends <- 0
+        }
+        yends <- yends * (nrow(membershipdf)/iter)
+        # update
+        membershipdf$yend[membershipdf$parent == infected[i]] <- yends +
+          membershipdf$ystart[membershipdf$parent == infected[i]]
+      }
+      tt <- max(membershipdf$tte[membershipdf$parent %in% infected])
+      infected <- membershipdf$child[membershipdf$parent %in% infected]
+      iter <- iter + 1 
+    }
+    
+    # out
+    return(membershipdf)
+  }
+  
+  # run function
+  out <- lapply(membershiplist, get_y_chains) %>% 
+    dplyr::bind_rows()
+  return(out)
+}
+
+
+# plot yvals
+yvals <- plot_yvals_by_membership_chains(transtree = time_tree)
+
+# plot xvals
+xvals <- time_tree %>% 
+  dplyr::select(c("child", "tte")) %>% 
+  dplyr::rename(parent = child, 
+                xstart = tte) 
+
+
+# bring together
+plotdat <- time_tree %>% 
+  dplyr::left_join(., yvals) %>% 
+  dplyr::left_join(., xvals, by = "parent") %>% 
+  dplyr::mutate(xstart = ifelse(is.na(xstart), 0, xstart)) %>% 
+  dplyr::mutate(label = purrr::map2_chr(parent, child, function(x,y){
+    paste(x,y, sep = ":", collapse = "")}),
+    label = stringr::str_replace_all(label, "None:", ""),
+    parent = ifelse(parent == "None", child, parent))
+
+# arrow data
+arrowdat <- plotdat %>% 
+  dplyr::filter(!(xstart == 0 & tte == 0))
+
+# plot
+p2 <- ggplot() +
+  geom_segment(data = arrowdat,
+               aes(x = xstart, y = ystart, xend = tte, yend = yend),
+               arrow = arrow(length = unit(0.05, "npc")),
+               alpha = 0.5) +
+  geom_point(data = plotdat, aes(x = tte, y = yend, color = parent),
+             show.legend = FALSE, alpha = 0.6) +
+  ggrepel::geom_text_repel(data = plotdat,
+                           aes(x = tte, y = yend, label = label)) +
+  facet_grid(membership ~ .) +
+  scale_color_viridis_d() +
+  xlab("Time to Event") +
+  theme(
+    axis.title.x = element_text(family = "Helvetica", face = "bold", hjust = 0.5, size = 12),
+    axis.text.x = element_text(family = "Helvetica", hjust = 0.5, size = 11),
+    axis.text.y = element_blank(),
+    axis.title.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.background = element_rect(fill = "transparent"),
+    plot.background = element_rect(fill = "transparent"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(color = "#000000", size = 1))
+
+
+
+
 ```
 ```{r}
 cowplot::plot_grid(p1,p2, nrow = 2, align = "h")
