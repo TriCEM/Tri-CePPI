@@ -30,3 +30,7 @@
 .RData
 
 
+# Large result files
+results/
+sandbox/logit_contact_favites/gears/play_contact_network_config_*.json
+sandbox/logit_contact_favites/gears/favites_realized_contact_matrix_*.tab.txt
