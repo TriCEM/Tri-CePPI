@@ -9,7 +9,6 @@
 library(tidyverse)
 library(igraph)
 set.seed(48)
-source("R/utils.R")
 
 #............................................................
 # start params
@@ -23,7 +22,7 @@ ij <- t(combn(nInds, 2))
 #                               m = 800)
 ba_net <-  igraph::make_tree(n = nInds,
                              children = 2)
-plot(ba_net)
+#plot(ba_net)
 
 ijt <- purrr::map2_dbl(ij[,1], ij[,2], function(x,y){igraph::distances(graph = ba_net,
                                                                        v = x, to = y)})
@@ -102,7 +101,19 @@ ijdist <- ijdist %>%
 #   geom_point(aes(x = gdistinv, y = tdistinv, color = probsucc)) +
 #   scale_color_viridis_c()
 
-
+# need this for human readability and names
+# get names and liftover
+rnnames <- randomNames::randomNames(n = nInds,
+                                    which.names = "first",
+                                    sample.with.replacement = F)
+rnnames <- stringr::str_replace_all(rnnames, "\\'|\\-| ", "")
+# loop through names
+ijdist$i <- as.character(ijdist$i)
+ijdist$j <- as.character(ijdist$j)
+for(i in 1:nInds) {
+  ijdist$i[ijdist$i == i] <- rnnames[i]
+  ijdist$j[ijdist$j == i] <- rnnames[i]
+}
 
 
 #............................................................
