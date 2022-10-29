@@ -29,7 +29,8 @@ ijt <- purrr::map2_dbl(ij[,1], ij[,2], function(x,y){igraph::distances(graph = b
 ijtransdist <- data.frame(i = ij[,1], j = ij[,2],
                           tdist = ijt) %>%
   dplyr::mutate(i = factor(i),
-                j = factor(j))
+                j = factor(j),
+                tdist = purrr::map_dbl(tdist, function(x){x*rexp(1, 0.1)})) # add some noise
 
 
 #............................................................
@@ -58,38 +59,44 @@ ijgeodist <- broom::tidy(as.dist(distmat)) %>%
 # tidy up
 #......................
 ijdist <- dplyr::left_join(ijtransdist, ijgeodist)
+plot(ijdist$tdist, ijdist$gdist)
+hist(ijdist$tdist) #exp
+hist(ijdist$gdist) #normal
 
 # standardize and invert for expit
-# put on same scale with pexp
-trate <- mean(ijdist$tdist)
-grate <- mean(ijdist$gdist)
 ijdist <- ijdist %>%
   dplyr::mutate(
-    tdiststd = pexp(tdist, rate = 1/trate),
-    tdistinv = exp(-tdiststd),
-    gdiststd = pexp(gdist, rate = 1/grate),
-    gdistinv = exp(-gdiststd)
+    tdistinv = pexp(tdist, rate = 1/mean(ijdist$tdist)),
+    gdistinv = pnorm(gdist, mean = mean(ijdist$gdist), sd = sd(ijdist$gdist))
   )
+
+
 
 # viz
 ijdist %>%
   ggplot() +
   geom_point(aes(x = tdistinv, y = gdistinv))
 cor(ijdist$tdistinv, ijdist$gdistinv)
+summary(ijdist$gdistinv)
+summary(ijdist$tdistinv)
+
 
 #............................................................
 # making a logistic model (kind of)
 #...........................................................
 # prob of event is the expit model
 # 1 / (1+e^{-B %*% X})
-wa <- 1; wb <- 0.5
+# here just taking weighted average instead from prob standardize above
+wa <- 2; wb <- 1
 ijdist <- ijdist %>%
-  dplyr::mutate(probsucc = 1/(1+exp(-(wa * tdistinv + wb * gdistinv))))
+  dplyr::mutate(probsucc = (wa * tdistinv + wb * gdistinv)/(wa + wb) )
 
+summary(ijdist$probsucc)
+plot(ijdist$probsucc)
 
 #............................................................
 # Code below ran iteratively to draw new realizations from
-# saw underlying probability matrix
+# same underlying probability matrix
 #...........................................................
 #                 outcome = purrr::map_int(probsucc, function(x){
 #                  return(rbinom(1, 1, prob = x))
