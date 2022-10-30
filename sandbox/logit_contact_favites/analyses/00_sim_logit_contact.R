@@ -61,6 +61,7 @@ plot(ijdist$tdist, ijdist$gdist)
 
 
 # standardize and invert for expit
+# make exponential decay ASSUMPTION
 ijdist <- ijdist %>%
   dplyr::mutate(
     tdistinv = pexp(tdist, rate = 1/mean(ijdist$tdist)),
@@ -126,5 +127,3 @@ for(i in 1:nInds) {
 # full
 readr::write_tsv(x = ijdist,
                  file = "gears/full_contact_matrix.tab.txt")
-
-

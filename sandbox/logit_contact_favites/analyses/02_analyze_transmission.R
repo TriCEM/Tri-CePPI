@@ -69,10 +69,9 @@ plotObj <- dplyr::left_join(fulldistmat, transmission_counts) %>%
   dplyr::select(c("i", "j", "trans_cnt", dplyr::everything())) %>%
   tidyr::pivot_longer(., cols = starts_with("probsucc_"),
                       names_to = "probtype", values_to = "probsucc") %>%
-  dplyr::mutate(trans_cnt = factor(trans_cnt, levels = 1:100)) %>%
   dplyr::filter(!is.na(trans_cnt)) %>%
   ggplot() +
-  geom_boxplot(aes(x = trans_cnt, y = probsucc),
+  geom_boxplot(aes(x = trans_cnt, y = probsucc, group = trans_cnt),
                outlier.colour = "red", outlier.shape = 8,
                outlier.size = 1) +
   facet_grid(~probtype, labeller = facetlbls) +
@@ -85,3 +84,9 @@ plotObj <- dplyr::left_join(fulldistmat, transmission_counts) %>%
 
 # plot
 plotObj
+
+# out
+jpeg("~/Desktop/favites_network_info_contacts.jpg",
+     width = 11, height = 8, units = "in", res = 500)
+plotObj
+graphics.off()
