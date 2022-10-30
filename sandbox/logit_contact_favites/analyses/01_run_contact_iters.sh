@@ -2,7 +2,7 @@
 
 
 
-for i in {1..100}
+for i in {1..1000}
 do
   Rscript ../R/realize_contact_matrix.R -I $i
   sleep 2 # file latency

@@ -29,9 +29,7 @@ ijt <- purrr::map2_dbl(ij[,1], ij[,2], function(x,y){igraph::distances(graph = b
 ijtransdist <- data.frame(i = ij[,1], j = ij[,2],
                           tdist = ijt) %>%
   dplyr::mutate(i = factor(i),
-                j = factor(j),
-                tdist = purrr::map_dbl(tdist, function(x){x*rexp(1, 0.1)})) # add some noise
-
+                j = factor(j))
 
 #............................................................
 # generate euclidean geographic distances
@@ -60,14 +58,13 @@ ijgeodist <- broom::tidy(as.dist(distmat)) %>%
 #......................
 ijdist <- dplyr::left_join(ijtransdist, ijgeodist)
 plot(ijdist$tdist, ijdist$gdist)
-hist(ijdist$tdist) #exp
-hist(ijdist$gdist) #normal
+
 
 # standardize and invert for expit
 ijdist <- ijdist %>%
   dplyr::mutate(
     tdistinv = pexp(tdist, rate = 1/mean(ijdist$tdist)),
-    gdistinv = pnorm(gdist, mean = mean(ijdist$gdist), sd = sd(ijdist$gdist))
+    gdistinv = pexp(gdist, rate = 1/mean(ijdist$gdist))
   )
 
 

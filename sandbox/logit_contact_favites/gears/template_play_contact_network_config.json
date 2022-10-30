@@ -15,13 +15,7 @@
 
     "NodeAvailability":              "Perfect",
 
-    "NodeEvolution":                 "VirusTreeSimulator",
-    "java_path":                     "java",
-    "vts_growthRate":                2.851904,
-    "vts_model":                     "logistic",
-    "vts_n0":                        1,
-    "vts_t50":                       -2,
-    "vts_max_attempts":              100,
+    "NodeEvolution":                 "None",
 
     "NumBranchSample":               "Single",
 

@@ -22,11 +22,11 @@ correctmatrix <- fullnet %>%
   dplyr::rename(probsucc_correct = probsucc)
 
 tdistmat <- fullnet %>%
-  dplyr::mutate(probsucc_tdist = 1/(1+exp(-tdistinv))) %>%
+  dplyr::rename(probsucc_tdist = tdistinv) %>%
   dplyr::select(c("i", "j", "probsucc_tdist"))
 
 gdistmat <- fullnet %>%
-  dplyr::mutate(probsucc_gdist = 1/(1+exp(-gdistinv))) %>%
+  dplyr::mutate(probsucc_gdist = gdistinv) %>%
   dplyr::select(c("i", "j", "probsucc_gdist"))
 
 
@@ -62,6 +62,9 @@ transmission_counts <- transmission_records %>%
   dplyr::select(c("i", "j", "trans_cnt"))
 
 # combine
+facetlbls <- ggplot2::as_labeller(c(`probsucc_correct` = "Correct Net",
+                                    `probsucc_tdist` = "Transport Net",
+                                    `probsucc_gdist` = "Geograph Net"))
 plotObj <- dplyr::left_join(fulldistmat, transmission_counts) %>%
   dplyr::select(c("i", "j", "trans_cnt", dplyr::everything())) %>%
   tidyr::pivot_longer(., cols = starts_with("probsucc_"),
@@ -69,13 +72,15 @@ plotObj <- dplyr::left_join(fulldistmat, transmission_counts) %>%
   dplyr::mutate(trans_cnt = factor(trans_cnt, levels = 1:100)) %>%
   dplyr::filter(!is.na(trans_cnt)) %>%
   ggplot() +
-  geom_point(aes(x = trans_cnt, y = probsucc)) +
-  facet_grid(~probtype) +
+  geom_boxplot(aes(x = trans_cnt, y = probsucc),
+               outlier.colour = "red", outlier.shape = 8,
+               outlier.size = 1) +
+  facet_grid(~probtype, labeller = facetlbls) +
   xlab("Transmission Counts") + ylab("Predictive Prob.") +
   theme_linedraw() +
-  theme(axis.title = element_text(family = "Helvetica", face = "bold", hjust = 0.5, size = 12),
-        axis.text.x = element_text(family = "Helvetica", hjust = 1, size = 11, angle = 45),
-        axis.text.y = element_text(family = "Helvetica", hjust = 0.5, size = 11))
+  theme(axis.title = element_text(family = "Arial", face = "bold", hjust = 0.5, size = 12),
+        axis.text.x = element_text(family = "Arial", hjust = 1, size = 11, angle = 45),
+        axis.text.y = element_text(family = "Arial", hjust = 0.5, size = 11))
 
 
 # plot
