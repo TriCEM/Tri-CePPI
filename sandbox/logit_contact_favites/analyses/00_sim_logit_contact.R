@@ -60,12 +60,11 @@ ijdist <- dplyr::left_join(ijtransdist, ijgeodist)
 plot(ijdist$tdist, ijdist$gdist)
 
 
-# standardize and invert for expit
 # make exponential decay ASSUMPTION
 ijdist <- ijdist %>%
   dplyr::mutate(
-    tdistinv = pexp(tdist, rate = 1/mean(ijdist$tdist)),
-    gdistinv = pexp(gdist, rate = 1/mean(ijdist$gdist))
+    tdistinv = 1 - pexp(tdist, rate = 1/mean(ijdist$tdist)),
+    gdistinv = 1 - pexp(gdist, rate = 1/mean(ijdist$gdist))
   )
 
 
