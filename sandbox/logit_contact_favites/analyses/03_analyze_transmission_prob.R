@@ -36,14 +36,9 @@ find_pred_trans_model <- function(transmission = NULL, contacts = NULL, N = 150)
     stop("Must have i, j colnames in contact df")
   }
 
-  #......................
-  # fixed parameters
-  #......................
+  # pull infxns
   infxns <- transmission %>%
     dplyr::pull(j)
-  prob_infxn <- length(infxns)/nrow(contacts)
-  toe <- transmission$tte
-  Nt <- N - cumsum(table(toe)) # NB, we are 0 indexed here
 
   #......................
   # contact counts
@@ -60,6 +55,11 @@ find_pred_trans_model <- function(transmission = NULL, contacts = NULL, N = 150)
                   j = stringr::str_split_fixed(uconnect, "\\|", n=2)[,2]) %>%
     dplyr::select(c("i", "j", "contact_cnt"))
 
+
+  # contact count denom
+  C <- nrow(contact_counts)
+
+
   # contact counts lack direction, so need to make expanded df
   contact_countsexpand <- contact_counts
   colnames(contact_countsexpand) <- c("j", "i", "contact_cnt")
@@ -70,37 +70,32 @@ find_pred_trans_model <- function(transmission = NULL, contacts = NULL, N = 150)
   #......................
   #TODO this is bad scoping
   Qijmat <- contact_counts %>%
-    dplyr::mutate(Cij = 1 - (1-prob_infxn)^contact_cnt) %>%
-    dplyr::mutate(Bij = purrr::map(Cij, function(x){return(x/Nt)})) %>%
-    dplyr::mutate(Qij = purrr::map(Bij, function(x){return(1-exp(-x))}))
+    dplyr::mutate(Bij = contact_cnt/C) %>%
+    dplyr::mutate(Qij = purrr::map_dbl(Bij, function(x){return(1-exp(-x))}))
 
   #......................
   # prob of infxn
   #......................
   # initialize
-  p0 <- table(toe)[1]/N
-  ret <- matrix(0, nrow = length(infxns), ncol = length(Nt))
+  ret <- matrix(0, nrow = length(infxns), ncol = sum(transmission$tte != 0) + 1)
   rownames(ret) <- infxns
-  ret[, 1] <- p0 # prob of infxn at time 0
   # find seeds and replace w/ prob of infxn at time 0 is 1
   iseeds <- which(rownames(ret) %in% transmission$j[transmission$tte == 0])
-  ret[iseeds, 1] <- 1
+  ret[, 1] <- length(iseeds)/N
 
-  for(t in 2:ncol(ret)){
+  for (t in 2:ncol(ret)) {
     for (i in 1:nrow(ret)) {
-      # find init
-      previ <- ret[i, t-1]
-      iterQijmat <- Qijmat[Qijmat$i == rownames(ret)[i], ]
-      for(j in 1:nrow(iterQijmat)) {
-        prevj <- ret[rownames(ret) == iterQijmat$j[j], t-1]
-        Qijcalc <- Qijmat$Qij[[i]][t]
-        # bring together
-        ret[i,t] <- ret[i,t] + Qijcalc * prevj
-      } # end j
-      # now account for i before next time step
-     # ret[i,t] <- ret[i,t] * (1-previ)
-    } # end i
-  } # end time step
+      # pull out connections
+      ijmat <- Qijmat[rownames(ret)[i] == Qijmat$i, ]
+      for (j in 1:nrow(ijmat)) {
+        prevj <- ret[rownames(ret) == ijmat$j[j], t-1]
+        ret[i,t] <- ret[i,t] + ijmat$Qij[j] * prevj
+      } # end j connections
+      ret[i,t] <- ret[i,t] + ret[i, t-1] # previ
+    } # end i individual
+  }
+
+
 
 }
 
