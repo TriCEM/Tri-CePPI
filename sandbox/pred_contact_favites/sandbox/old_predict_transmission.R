@@ -22,23 +22,18 @@ library(goodegg)
 #' @param transmission dataframe; realized transmission dataframe from FAVITES
 #' @param contacts dataframe; realized contact dataframe from our internal R script
 #TODO should be able to read in config file to determine N
-find_pred_trans_model <- function(transmission = NULL, contacts = NULL, N = 150){
+find_pred_trans_model <- function(contacts = NULL, N = 150){
 
   #......................
   # assertions
   #......................
-  goodegg:::assert_dataframe(transmission)
-  if(!all(colnames(transmission) %in% c("i", "j", "tte"))){
-    stop("Must have i, j, tte colnames in transmission df")
-  }
   goodegg:::assert_dataframe(contacts)
   if(!all(colnames(contacts) %in% c("i", "j"))){
     stop("Must have i, j colnames in contact df")
   }
 
-  # pull infxns
-  infxns <- transmission %>%
-    dplyr::pull(j)
+  # pull nodes
+  nodes <- unique(c(contacts$i, contacts$j))
 
   #......................
   # contact counts
@@ -104,13 +99,4 @@ find_pred_trans_model <- function(transmission = NULL, contacts = NULL, N = 150)
 #............................................................
 # read in data
 #...........................................................
-transmission <- readr::read_tsv("results/mycontact_out_ret_1/error_free_files/transmission_network.txt.gz",
-                                col_names = F) %>%
-  magrittr::set_colnames(c("i", "j", "tte"))
-
-contacts <- readr::read_tsv("gears/favites_realized_contact_matrix_1.tab.txt",
-                            col_names = F) %>%
-  magrittr::set_colnames(c("type", "i", "j", "details", "direction")) %>%
-  dplyr::filter(type == "EDGE") %>%
-  dplyr::select(c("i", "j"))
-
+contacts <- readr::read_tsv("gears/full_contact_matrix.tab.txt")
