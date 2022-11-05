@@ -1,0 +1,379 @@
+NODE	abcity	.		
+NODE	abdmqv	.		
+NODE	abfjsz	.		
+NODE	abfklu	.		
+NODE	abfmoz	.		
+NODE	abgknr	.		
+NODE	abqtvy	.		
+NODE	abuxyz	.		
+NODE	acfhsz	.		
+NODE	acfmtu	.		
+NODE	acgrvw	.		
+NODE	achkmy	.		
+NODE	acruxy	.		
+NODE	adeoqr	.		
+NODE	adfptw	.		
+NODE	adhlvx	.		
+NODE	adimvw	.		
+NODE	adlnpv	.		
+NODE	aefgiy	.		
+NODE	aehmpz	.		
+NODE	aeilrt	.		
+NODE	aemuxy	.		
+NODE	afghsz	.		
+NODE	afjoqw	.		
+NODE	afltux	.		
+NODE	aghpsx	.		
+NODE	ahikqs	.		
+NODE	ahpqtv	.		
+NODE	aqtvxz	.		
+NODE	bdehov	.		
+NODE	bdglmq	.		
+NODE	bdhijt	.		
+NODE	bdiouz	.		
+NODE	bdklms	.		
+NODE	bdopqz	.		
+NODE	bdpsux	.		
+NODE	befqru	.		
+NODE	befqxz	.		
+NODE	beiksz	.		
+NODE	beknvz	.		
+NODE	besvwz	.		
+NODE	bfinux	.		
+NODE	bghpuy	.		
+NODE	bgijos	.		
+NODE	bgjmrv	.		
+NODE	bgqvwz	.		
+NODE	bikltz	.		
+NODE	biopwz	.		
+NODE	bjopwy	.		
+NODE	bmnryz	.		
+NODE	cdeghm	.		
+NODE	cdfimz	.		
+NODE	cdghoq	.		
+NODE	cdhkxz	.		
+NODE	cdhtvx	.		
+NODE	cdjksv	.		
+NODE	cdjpqy	.		
+NODE	cdjqst	.		
+NODE	cefhvx	.		
+NODE	cefims	.		
+NODE	celmty	.		
+NODE	cemops	.		
+NODE	cfmuvw	.		
+NODE	cglstz	.		
+NODE	cgmrtx	.		
+NODE	chipsz	.		
+NODE	chklpq	.		
+NODE	chmprv	.		
+NODE	chnoqt	.		
+NODE	ciovxy	.		
+NODE	cirsvw	.		
+NODE	cklrsx	.		
+NODE	clmpqt	.		
+NODE	clqrxy	.		
+NODE	clqsxy	.		
+NODE	defghm	.		
+NODE	degjtw	.		
+NODE	dejmpx	.		
+NODE	denqtv	.		
+NODE	dfgnuv	.		
+NODE	dfhruv	.		
+NODE	dfkovy	.		
+NODE	dflrvw	.		
+NODE	dfnoqr	.		
+NODE	dghwxy	.		
+NODE	dgrxyz	.		
+NODE	dhilnv	.		
+NODE	dhkmuz	.		
+NODE	dhlmpz	.		
+NODE	dijnux	.		
+NODE	diklno	.		
+NODE	dinrsz	.		
+NODE	diqsxz	.		
+NODE	dmpuxz	.		
+NODE	dnptvy	.		
+NODE	efhlvy	.		
+NODE	efjruv	.		
+NODE	egjmux	.		
+NODE	egjopu	.		
+NODE	egkruy	.		
+NODE	egnoru	.		
+NODE	ehjntv	.		
+NODE	ehnqrs	.		
+NODE	ehprty	.		
+NODE	eijoqt	.		
+NODE	einpvy	.		
+NODE	ejqtwz	.		
+NODE	elnruz	.		
+NODE	fghstw	.		
+NODE	fgmsuy	.		
+NODE	fhinrt	.		
+NODE	fhiopx	.		
+NODE	fhjkyz	.		
+NODE	fhjmnx	.		
+NODE	fhmvxy	.		
+NODE	fhuxyz	.		
+NODE	fijkqz	.		
+NODE	fijptw	.		
+NODE	fiptxy	.		
+NODE	fmntuz	.		
+NODE	fosvwy	.		
+NODE	ghimou	.		
+NODE	gikmtw	.		
+NODE	gikquy	.		
+NODE	gipqxz	.		
+NODE	gjpuxz	.		
+NODE	gkmoty	.		
+NODE	glmpuv	.		
+NODE	glmtux	.		
+NODE	gloqsv	.		
+NODE	gmotvz	.		
+NODE	gopqyz	.		
+NODE	hirvxz	.		
+NODE	hjlnpu	.		
+NODE	hjptuv	.		
+NODE	ijlpxz	.		
+NODE	ijmnrt	.		
+NODE	ijnptz	.		
+NODE	iklmpx	.		
+NODE	jklrvx	.		
+NODE	jltvwz	.		
+NODE	klpquy	.		
+NODE	kmvwxz	.		
+NODE	knpqtz	.		
+NODE	koqrwy	.		
+EDGE	bikltz	egjopu	.	u
+EDGE	bgjmrv	dhilnv	.	u
+EDGE	gloqsv	acfhsz	.	u
+EDGE	acfhsz	gjpuxz	.	u
+EDGE	gjpuxz	dhkmuz	.	u
+EDGE	dhkmuz	ijnptz	.	u
+EDGE	ijnptz	gopqyz	.	u
+EDGE	dhilnv	gmotvz	.	u
+EDGE	fhmvxy	fijkqz	.	u
+EDGE	cklrsx	abqtvy	.	u
+EDGE	abqtvy	abfmoz	.	u
+EDGE	abfmoz	fhiopx	.	u
+EDGE	fijptw	cdeghm	.	u
+EDGE	bdiouz	biopwz	.	u
+EDGE	chmprv	eijoqt	.	u
+EDGE	eijoqt	fghstw	.	u
+EDGE	befqru	dfnoqr	.	u
+EDGE	dfnoqr	cgmrtx	.	u
+EDGE	abdmqv	koqrwy	.	u
+EDGE	koqrwy	fhinrt	.	u
+EDGE	fhinrt	bdpsux	.	u
+EDGE	gkmoty	cgmrtx	.	u
+EDGE	cdghoq	ijlpxz	.	u
+EDGE	cdghoq	dfgnuv	.	u
+EDGE	egnoru	gikmtw	.	u
+EDGE	clqsxy	bdhijt	.	u
+EDGE	jklrvx	egkruy	.	u
+EDGE	dfkovy	afjoqw	.	u
+EDGE	befqxz	acruxy	.	u
+EDGE	diqsxz	dgrxyz	.	u
+EDGE	denqtv	acgrvw	.	u
+EDGE	chmprv	bdopqz	.	u
+EDGE	cdhtvx	cdfimz	.	u
+EDGE	cdfimz	ijlpxz	.	u
+EDGE	ijlpxz	bdpsux	.	u
+EDGE	ijmnrt	aehmpz	.	u
+EDGE	bjopwy	cdjksv	.	u
+EDGE	gikquy	abgknr	.	u
+EDGE	bgqvwz	gikmtw	.	u
+EDGE	chnoqt	aqtvxz	.	u
+EDGE	biopwz	dgrxyz	.	u
+EDGE	dgrxyz	egjmux	.	u
+EDGE	cklrsx	knpqtz	.	u
+EDGE	knpqtz	fhuxyz	.	u
+EDGE	abuxyz	celmty	.	u
+EDGE	acfmtu	ehnqrs	.	u
+EDGE	bdhijt	dflrvw	.	u
+EDGE	dnptvy	dfhruv	.	u
+EDGE	bdklms	chipsz	.	u
+EDGE	dghwxy	glmpuv	.	u
+EDGE	gikquy	fghstw	.	u
+EDGE	bgijos	afjoqw	.	u
+EDGE	dmpuxz	abgknr	.	u
+EDGE	cdjpqy	besvwz	.	u
+EDGE	cdjpqy	hirvxz	.	u
+EDGE	jltvwz	abfklu	.	u
+EDGE	koqrwy	adhlvx	.	u
+EDGE	bmnryz	clqrxy	.	u
+EDGE	clqrxy	adlnpv	.	u
+EDGE	dfkovy	dnptvy	.	u
+EDGE	gmotvz	dinrsz	.	u
+EDGE	achkmy	bghpuy	.	u
+EDGE	cdeghm	cfmuvw	.	u
+EDGE	aghpsx	ejqtwz	.	u
+EDGE	ejqtwz	klpquy	.	u
+EDGE	elnruz	cefhvx	.	u
+EDGE	ijlpxz	cefhvx	.	u
+EDGE	diklno	egjopu	.	u
+EDGE	ghimou	iklmpx	.	u
+EDGE	efjruv	efhlvy	.	u
+EDGE	efhlvy	fosvwy	.	u
+EDGE	glmtux	chipsz	.	u
+EDGE	chipsz	dfgnuv	.	u
+EDGE	afjoqw	beiksz	.	u
+EDGE	fijptw	bdehov	.	u
+EDGE	fijptw	afltux	.	u
+EDGE	fijptw	bgjmrv	.	u
+EDGE	fijptw	gipqxz	.	u
+EDGE	bikltz	bdehov	.	u
+EDGE	bikltz	gikquy	.	u
+EDGE	bikltz	aeilrt	.	u
+EDGE	bgjmrv	ehprty	.	u
+EDGE	bgjmrv	egnoru	.	u
+EDGE	abcity	abdmqv	.	u
+EDGE	gloqsv	gjpuxz	.	u
+EDGE	gloqsv	dhkmuz	.	u
+EDGE	acfhsz	ijnptz	.	u
+EDGE	gjpuxz	gopqyz	.	u
+EDGE	dhkmuz	adlnpv	.	u
+EDGE	dhkmuz	bgijos	.	u
+EDGE	gopqyz	dhilnv	.	u
+EDGE	fhmvxy	ciovxy	.	u
+EDGE	fijkqz	adeoqr	.	u
+EDGE	dhilnv	fijkqz	.	u
+EDGE	fhmvxy	ahpqtv	.	u
+EDGE	cklrsx	achkmy	.	u
+EDGE	fijkqz	befqxz	.	u
+EDGE	ahpqtv	abfmoz	.	u
+EDGE	abqtvy	bdglmq	.	u
+EDGE	cemops	cfmuvw	.	u
+EDGE	bdiouz	denqtv	.	u
+EDGE	bdglmq	bdiouz	.	u
+EDGE	bdglmq	celmty	.	u
+EDGE	bdiouz	eijoqt	.	u
+EDGE	eijoqt	degjtw	.	u
+EDGE	dhlmpz	clqsxy	.	u
+EDGE	chmprv	dfnoqr	.	u
+EDGE	gjpuxz	eijoqt	.	u
+EDGE	befqru	acruxy	.	u
+EDGE	befqru	gipqxz	.	u
+EDGE	adimvw	dfhruv	.	u
+EDGE	abdmqv	fhinrt	.	u
+EDGE	koqrwy	gkmoty	.	u
+EDGE	koqrwy	cgmrtx	.	u
+EDGE	gloqsv	cgmrtx	.	u
+EDGE	cgmrtx	afghsz	.	u
+EDGE	abfjsz	afghsz	.	u
+EDGE	cdghoq	egnoru	.	u
+EDGE	cdghoq	clqsxy	.	u
+EDGE	afghsz	clqsxy	.	u
+EDGE	afghsz	cemops	.	u
+EDGE	egnoru	egkruy	.	u
+EDGE	jklrvx	aemuxy	.	u
+EDGE	dfkovy	ciovxy	.	u
+EDGE	dfkovy	fhjmnx	.	u
+EDGE	ciovxy	acruxy	.	u
+EDGE	befqxz	bjopwy	.	u
+EDGE	dhilnv	acruxy	.	u
+EDGE	adfptw	diqsxz	.	u
+EDGE	adfptw	denqtv	.	u
+EDGE	bjopwy	acgrvw	.	u
+EDGE	acgrvw	kmvwxz	.	u
+EDGE	diqsxz	kmvwxz	.	u
+EDGE	denqtv	kmvwxz	.	u
+EDGE	abqtvy	denqtv	.	u
+EDGE	kmvwxz	gipqxz	.	u
+EDGE	gipqxz	dinrsz	.	u
+EDGE	cefims	hjptuv	.	u
+EDGE	cdhtvx	ijlpxz	.	u
+EDGE	cdfimz	aehmpz	.	u
+EDGE	ijlpxz	cirsvw	.	u
+EDGE	bdpsux	cirsvw	.	u
+EDGE	aehmpz	beknvz	.	u
+EDGE	dfnoqr	aehmpz	.	u
+EDGE	cirsvw	hjlnpu	.	u
+EDGE	beknvz	fmntuz	.	u
+EDGE	beknvz	cdjksv	.	u
+EDGE	dfkovy	chklpq	.	u
+EDGE	fmntuz	chklpq	.	u
+EDGE	diqsxz	cdjksv	.	u
+EDGE	acgrvw	hjptuv	.	u
+EDGE	gikquy	gikmtw	.	u
+EDGE	defghm	hirvxz	.	u
+EDGE	befqru	cemops	.	u
+EDGE	gikmtw	chnoqt	.	u
+EDGE	biopwz	bghpuy	.	u
+EDGE	cgmrtx	biopwz	.	u
+EDGE	cemops	dgrxyz	.	u
+EDGE	dgrxyz	knpqtz	.	u
+EDGE	gikmtw	dgrxyz	.	u
+EDGE	egjmux	fhuxyz	.	u
+EDGE	egjmux	acfmtu	.	u
+EDGE	knpqtz	ahikqs	.	u
+EDGE	fhuxyz	abuxyz	.	u
+EDGE	egjmux	ahikqs	.	u
+EDGE	ahikqs	ehnqrs	.	u
+EDGE	celmty	dflrvw	.	u
+EDGE	dflrvw	bdklms	.	u
+EDGE	dflrvw	degjtw	.	u
+EDGE	fijkqz	degjtw	.	u
+EDGE	dghwxy	clmpqt	.	u
+EDGE	dghwxy	ghimou	.	u
+EDGE	bdklms	glmpuv	.	u
+EDGE	degjtw	glmpuv	.	u
+EDGE	hjptuv	dghwxy	.	u
+EDGE	glmpuv	cglstz	.	u
+EDGE	fghstw	clmpqt	.	u
+EDGE	fghstw	fgmsuy	.	u
+EDGE	clmpqt	afjoqw	.	u
+EDGE	fgmsuy	dmpuxz	.	u
+EDGE	afjoqw	bdopqz	.	u
+EDGE	glmpuv	cdjpqy	.	u
+EDGE	dmpuxz	cdjpqy	.	u
+EDGE	chklpq	bmnryz	.	u
+EDGE	cdjpqy	jltvwz	.	u
+EDGE	abgknr	jltvwz	.	u
+EDGE	cklrsx	abfklu	.	u
+EDGE	ahikqs	elnruz	.	u
+EDGE	ahpqtv	adhlvx	.	u
+EDGE	adeoqr	egjopu	.	u
+EDGE	bmnryz	aghpsx	.	u
+EDGE	clqrxy	diklno	.	u
+EDGE	bmnryz	adlnpv	.	u
+EDGE	cdghoq	einpvy	.	u
+EDGE	dgrxyz	clqrxy	.	u
+EDGE	adlnpv	bfinux	.	u
+EDGE	adlnpv	aefgiy	.	u
+EDGE	einpvy	aefgiy	.	u
+EDGE	abdmqv	gmotvz	.	u
+EDGE	bfinux	dinrsz	.	u
+EDGE	fgmsuy	dinrsz	.	u
+EDGE	bjopwy	dinrsz	.	u
+EDGE	achkmy	cdeghm	.	u
+EDGE	cdjqst	fiptxy	.	u
+EDGE	fghstw	cdeghm	.	u
+EDGE	aefgiy	dejmpx	.	u
+EDGE	cgmrtx	defghm	.	u
+EDGE	ejqtwz	ghimou	.	u
+EDGE	ejqtwz	dfhruv	.	u
+EDGE	klpquy	dfhruv	.	u
+EDGE	befqxz	klpquy	.	u
+EDGE	ghimou	dijnux	.	u
+EDGE	fiptxy	dfhruv	.	u
+EDGE	dfhruv	elnruz	.	u
+EDGE	dijnux	bdehov	.	u
+EDGE	cdhkxz	cefhvx	.	u
+EDGE	elnruz	fhjkyz	.	u
+EDGE	fhinrt	diklno	.	u
+EDGE	fhjkyz	egjopu	.	u
+EDGE	diklno	aeilrt	.	u
+EDGE	aeilrt	ehjntv	.	u
+EDGE	iklmpx	efjruv	.	u
+EDGE	iklmpx	efhlvy	.	u
+EDGE	efjruv	fosvwy	.	u
+EDGE	efhlvy	bghpuy	.	u
+EDGE	bghpuy	besvwz	.	u
+EDGE	bghpuy	glmtux	.	u
+EDGE	cfmuvw	glmtux	.	u
+EDGE	cfmuvw	chipsz	.	u
+EDGE	besvwz	dfgnuv	.	u
+EDGE	chipsz	beiksz	.	u
+EDGE	chipsz	aqtvxz	.	u
+EDGE	bdhijt	aqtvxz	.	u
+EDGE	ejqtwz	bdehov	.	u

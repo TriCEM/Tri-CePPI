@@ -8,8 +8,8 @@
     "Driver":                        "Default",
     "out_dir":                       "../results/mycontact_out_ret",
 
-    "EndCriteria":                   "Transmissions",
-    "end_transmissions":             500,
+    "EndCriteria":                   "Time",
+    "end_time":                       500,
 
     "Logging":                       "STDOUT",
 
@@ -35,10 +35,10 @@
 
     "TimeSample":                    "End",
 
-    "TransmissionNodeSample":        "RandomMultiInfection",
+    "TransmissionNodeSample":        "RandomSingleInfection",
 
-    "TransmissionTimeSample":        "Fixed",
-    "fixed_transmission_time_delta": 1,
+    "TransmissionTimeSample":        "Exponential",
+    "time_sample_rate":               0.1,
 
     "TreeNode":                      "Simple",
 

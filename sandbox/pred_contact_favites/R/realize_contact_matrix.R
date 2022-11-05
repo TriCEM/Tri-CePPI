@@ -6,7 +6,7 @@
 #..............................................................
 library(tidyverse)
 library(optparse)
-DIR <- "/Users/nbrazeau/Documents/Github/Tri-CePPI/sandbox/logit_contact_favites/"
+DIR <- "/Users/nbrazeau/Documents/Github/Tri-CePPI/sandbox/pred_contact_favites/"
 source(paste0(DIR, "R/", "utils.R"))
 
 option_list=list(
@@ -39,4 +39,3 @@ realized_contacts <- ijdist %>%
 liftover_conmat2favites(realized_contmat = realized_contacts,
                         outpath = paste0(DIR, "gears/favites_realized_contact_matrix",
                                          "_", opt$iter, ".tab.txt"))
-

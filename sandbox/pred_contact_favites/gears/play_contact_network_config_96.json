@@ -1,0 +1,46 @@
+{
+    "ContactNetwork":                "NetworkX",
+    "ContactNetworkGenerator":       "File",
+    "contact_network_file":          "../gears/favites_realized_contact_matrix_96.tab.txt",
+
+    "num_cn_nodes":                  10,
+
+    "Driver":                        "Default",
+    "out_dir":                       "../results/mycontact_out_ret_96",
+
+    "EndCriteria":                   "Time",
+    "end_time":                       500,
+
+    "Logging":                       "STDOUT",
+
+    "NodeAvailability":              "Perfect",
+
+    "NodeEvolution":                 "None",
+
+    "NumBranchSample":               "Single",
+
+    "NumTimeSample":                 "Once",
+
+    "SeedSelection":                 "Random",
+    "num_seeds":                     1,
+
+    "SeedSequence":                  "Random",
+    "seed_sequence_length":          10,
+
+    "SequenceEvolution":             "NoMutation",
+
+    "Sequencing":                    "Perfect",
+
+    "SourceSample":                  "Random",
+
+    "TimeSample":                    "End",
+
+    "TransmissionNodeSample":        "RandomSingleInfection",
+
+    "TransmissionTimeSample":        "Exponential",
+    "time_sample_rate":               0.1,
+
+    "TreeNode":                      "Simple",
+
+    "TreeUnit":                      "Same",
+}

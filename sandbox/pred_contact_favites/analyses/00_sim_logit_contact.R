@@ -23,40 +23,33 @@ set.seed(48)
 # start params
 #...........................................................
 nInds <- 150
-ij <- t(combn(nInds, 2))
 #............................................................
 # generate effective distance network
 #...........................................................
-playnet <- sample_smallworld(dim = 1, size = nInds,
-                             nei = 2, p = 0.2)
+playnet <- tidygraph::play_smallworld(n_dim  = 1, dim_size  = nInds,
+                                      order = 3, p_rewire = 0.2)
 # quick viz
 playnet %>%
   ggraph::ggraph(layout = 'kk') +
   ggraph::geom_edge_link()
 
-ijt <- purrr::map2_dbl(ij[,1], ij[,2],
-                       function(x,y){igraph::distances(graph = playnet,
-                                                       v = x, to = y)})
-# distribtuion
-summary(ijt)
+#......................
+# extract contacts
+#......................
+ij <- playnet %>%
+  tidygraph::activate("edges") %>%
+  tibble::as_tibble() %>%
+  dplyr::rename(i = from,
+                j = to)
 
 # add "weights" to connections
-wi <- runif(n = length(ijt))
-
+wi <- runif(n = nrow(ij))
 # bring together
-ijdist <- data.frame(i = ij[,1], j = ij[,2],
-                     tdist = wi*ijt) %>%
-  dplyr::mutate(i = factor(i),
+ijdist <- ij %>%
+  dplyr::mutate(probsucc = wi,
+                i = factor(i),
                 j = factor(j))
 
-
-# make exponential decay ASSUMPTION
-ijdist <- ijdist %>%
-  dplyr::mutate(
-    probsucc = 1 - pexp(tdist, rate = 1/mean(ijdist$tdist)))
-
-summary(ijdist$probsucc)
-hist(ijdist$probsucc)
 
 #............................................................
 # Code below ran iteratively to draw new realizations from
@@ -91,3 +84,7 @@ for(i in 1:nInds)  {
 # full
 readr::write_tsv(x = ijdist,
                  file = "gears/full_contact_matrix.tab.txt")
+playnet <- playnet %>%
+  tidygraph::activate("nodes") %>%
+  dplyr::mutate(node = rnnames)
+saveRDS(playnet, file = "gears/playnet.RDS")
